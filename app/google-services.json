@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "242938468632",
+    "project_id": "chatapk-us",
+    "storage_bucket": "chatapk-us.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242938468632:android:6b98112bfca79ed3eee66d",
+        "android_client_info": {
+          "package_name": "com.example.chatapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYVeNnx9G62tAYLqHXsIDtCU7O4SrUIlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
