@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
      Button mcbc;
-     Button UjjwalRand;
+     Button Ujjwal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
