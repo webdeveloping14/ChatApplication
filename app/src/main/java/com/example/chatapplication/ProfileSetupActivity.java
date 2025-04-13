@@ -393,6 +393,9 @@ public class ProfileSetupActivity extends AppCompatActivity {
                                     loadingLayout.setVisibility(View.GONE); // Hide loading
                                     if (task.isSuccessful()) {
                                         Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
                                     }
