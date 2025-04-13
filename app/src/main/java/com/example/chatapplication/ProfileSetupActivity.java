@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -18,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -47,7 +47,6 @@ import java.util.Map;
 public class ProfileSetupActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-    private static final int STORAGE_PERMISSION_REQUEST_CODE = 101;
 
     private CardView profileImageCard;
     private ImageView profileImageView;
@@ -60,7 +59,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private String profilePhotoPath;
     private boolean isPhotoChanged = false;
 
-    // Firebase components
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
@@ -76,15 +74,13 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 }
             });
 
-    private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    handleGalleryImage(result.getData().getData());
+    private final ActivityResultLauncher<String> galleryLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    handleGalleryImage(uri);
                 }
             });
 
-    // Permission launchers
     private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
@@ -96,32 +92,18 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         }
                     });
 
-    private final ActivityResultLauncher<String> requestStoragePermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                    isGranted -> {
-                        if (isGranted) {
-                            openGallery();
-                        } else {
-                            Toast.makeText(this, getString(R.string.storage_permission_required),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_setup);
 
-        // Initialize Firebase components
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
-        // Check if user is logged in
         if (currentUser == null) {
-            // Redirect to login screen
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -202,7 +184,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
             if (which == 0) {
                 checkCameraPermissionAndOpenCamera();
             } else {
-                checkStoragePermissionAndOpenGallery();
+                openGallery();
             }
         });
         builder.show();
@@ -214,15 +196,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
             requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         } else {
             openCamera();
-        }
-    }
-
-    private void checkStoragePermissionAndOpenGallery() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-        } else {
-            openGallery();
         }
     }
 
@@ -248,8 +221,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryLauncher.launch(galleryIntent);
+        galleryLauncher.launch("image/*");
     }
 
     private File createImageFile() {
@@ -302,7 +274,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
 
-            // Create a temporary file for the selected image
             File photoFile = createImageFile();
             if (photoFile != null) {
                 currentPhotoUri = Uri.fromFile(photoFile);
@@ -328,14 +299,12 @@ public class ProfileSetupActivity extends AppCompatActivity {
         }
 
         try {
-            // Compress and save the bitmap to a file
             File imageFile = new File(profilePhotoPath);
             FileOutputStream out = new FileOutputStream(imageFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
             out.flush();
             out.close();
 
-            // Display the image
             Glide.with(this)
                     .load(imageFile)
                     .apply(new RequestOptions()
@@ -375,11 +344,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         if (isPhotoChanged && profilePhotoPath != null) {
             uploadProfileImageAndSaveProfile(userId, profileUpdates);
+        } else if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+            profileUpdates.put("profileImageUrl", previousImageUrl);
+            saveUserProfile(userId, profileUpdates);
         } else {
-            // Keep the previous image URL if the image hasn't changed
-            if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
-                profileUpdates.put("profileImageUrl", previousImageUrl);
-            }
             saveUserProfile(userId, profileUpdates);
         }
     }
@@ -401,11 +369,9 @@ public class ProfileSetupActivity extends AppCompatActivity {
         StorageReference imageRef = storageRef.child("profile_images/" + userId + ".jpg");
         Uri fileUri = Uri.fromFile(imageFile);
 
-        // First delete existing image if there was one
         if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
             StorageReference oldImageRef = storage.getReferenceFromUrl(previousImageUrl);
             oldImageRef.delete().addOnCompleteListener(task -> {
-                // Continue with upload regardless of deletion success
                 performImageUpload(imageRef, fileUri, userId, profileUpdates);
             });
         } else {
@@ -417,7 +383,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
                                     String userId, Map<String, Object> profileUpdates) {
         imageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    // Get download URL
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         profileUpdates.put("profileImageUrl", uri.toString());
                         saveUserProfile(userId, profileUpdates);
@@ -451,31 +416,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> {
+                    loadingLayout.setVisibility(View.GONE);
                     Toast.makeText(ProfileSetupActivity.this,
                             "Failed to save profile: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
-                    loadingLayout.setVisibility(View.GONE);
                 });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, getString(R.string.camera_permission_required),
-                        Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, getString(R.string.storage_permission_required),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }
