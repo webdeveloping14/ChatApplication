@@ -33,11 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
-
-    // UI Elements
     private CircleImageView profileImage;
     private TextView textUsername;
-    private TextView textBio;
+    private TextView textBio, textEmail;
     private ViewPager2 viewPager;
     private MaterialButton btnEditProfile;
     private MaterialButton btnStartChat;
@@ -48,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         storageReference = FirebaseStorage.getInstance().getReference();
-
-        // Initialize UI components
         profileImage = findViewById(R.id.profile_image);
         textUsername = findViewById(R.id.text_username);
         textBio = findViewById(R.id.text_bio);
@@ -62,11 +57,8 @@ public class MainActivity extends AppCompatActivity {
         btnEditProfile = findViewById(R.id.button_edit_profile);
         btnStartChat = findViewById(R.id.button_start_chat);
         progressBar = findViewById(R.id.progress_bar);
-
-        // Set up button listeners
+        textEmail = findViewById(R.id.text_email);
         setupButtonListeners();
-
-        // Load profile data
         loadProfileData();
     }
 
@@ -87,12 +79,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadProfileData() {
-        // Show progress indicator
         progressBar.setVisibility(View.VISIBLE);
-
-        // Check if user is authenticated
         if (currentUser == null) {
-            // Handle not logged in state
             Toast.makeText(this, "You are not logged in", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
             return;
@@ -109,13 +97,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Option 1: Use the updated User class with status field
                     User user = dataSnapshot.getValue(User.class);
 
                     if (user != null) {
                         updateUserProfileUI(user);
                     } else {
-                        // Option 2: Manual extraction if deserialization fails
                         String username = dataSnapshot.child("username").getValue(String.class);
                         String status = dataSnapshot.child("status").getValue(String.class);
                         String email = dataSnapshot.child("email").getValue(String.class);
@@ -164,20 +150,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUserProfileUI(User user) {
-        textUsername.setText(user.getUsername());
-        textBio.setText(user.getStatus()); // Changed from getBio() to getStatus()
+        textUsername.setText("Username: " + user.getUsername());
+        textBio.setText(user.getStatus());
+        textEmail.setText("Email: " + user.getEmail());
         progressBar.setVisibility(View.GONE);
     }
 
     public static class User {
         private String username;
-        private String status; // Changed from 'bio' to 'status' to match Firebase
+        private String status;
         private String email;
-        private String profileImageUrl; // Added this field
-        private String createdAt; // Added this field
+        private String profileImageUrl;
+        private String createdAt;
 
         public User() {
-            // Required empty constructor for Firebase
         }
 
         public User(String username, String status, String email) {
