@@ -136,12 +136,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         UserProfile profile = documentSnapshot.toObject(UserProfile.class);
 
                         if (profile != null) {
-                            // Set status
                             if (profile.getStatus() != null && !profile.getStatus().isEmpty()) {
                                 statusEditText.setText(profile.getStatus());
                             }
 
-                            // Load profile image if available
                             if (profile.getProfileImageUrl() != null && !profile.getProfileImageUrl().isEmpty()) {
                                 previousImageUrl = profile.getProfileImageUrl();
                                 Glide.with(this)
@@ -154,11 +152,9 @@ public class ProfileSetupActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    // Hide loading
                     loadingLayout.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    // Error handling
                     Toast.makeText(this, "Failed to load profile: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                     loadingLayout.setVisibility(View.GONE);
@@ -209,7 +205,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private File createImageFile() {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(null);
@@ -245,7 +240,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
         showImageLoadingProgress(true);
 
         try {
-            // Create a file to save the selected image
             File photoFile = createImageFile();
             if (photoFile != null) {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
@@ -259,7 +253,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void processAndDisplayImage(Bitmap bitmap) {
-        // Save compressed bitmap to file
         try {
             File imageFile = new File(profilePhotoPath);
             FileOutputStream out = new FileOutputStream(imageFile);
@@ -267,7 +260,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
             out.flush();
             out.close();
 
-            // Load the image with Glide
             Glide.with(this)
                     .load(imageFile)
                     .apply(new RequestOptions()
@@ -290,38 +282,31 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void saveProfileAndNavigate() {
-        // Show loading spinner
         loadingLayout.setVisibility(View.VISIBLE);
         loadingText.setText(R.string.updating_profile);
 
         String userId = currentUser.getUid();
         String status = statusEditText.getText().toString().trim();
 
-        // Create user profile object
         UserProfile profile = new UserProfile();
         profile.setStatus(status);
 
-        // If previous image URL exists and image not changed, keep using it
         if (!isPhotoChanged && previousImageUrl != null) {
             profile.setProfileImageUrl(previousImageUrl);
             saveUserProfile(userId, profile);
         }
-        // If profile photo was changed, upload it first
         else if (isPhotoChanged && profilePhotoPath != null) {
             uploadProfileImageAndSaveProfile(userId, profile);
         } else {
-            // No image change or previous image
             saveUserProfile(userId, profile);
         }
     }
 
     private void uploadProfileImageAndSaveProfile(String userId, UserProfile profile) {
-        // Create file reference
         StorageReference imageRef = storageRef.child("profile_images/" + userId + ".jpg");
 
         Uri fileUri = Uri.fromFile(new File(profilePhotoPath));
 
-        // Upload file
         imageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     // Get download URL
@@ -339,14 +324,11 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void saveUserProfile(String userId, UserProfile profile) {
-        // Save to Firestore
         db.collection("users").document(userId)
                 .set(profile, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
-                    // Hide loading spinner
                     loadingLayout.setVisibility(View.GONE);
 
-                    // Navigate to MainActivity
                     Intent intent = new Intent(ProfileSetupActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
