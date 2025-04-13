@@ -25,10 +25,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    TextView login_reg;
-    EditText email, password;
-    Button Login_btn;
-    FirebaseAuth auth = FirebaseAuth.getInstance();
+    private TextView login_reg;
+    private EditText email, password;
+    private Button Login_btn;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +50,13 @@ public class LoginActivity extends AppCompatActivity {
                 String userEmail = email.getText().toString();
                 String userPassword = password.getText().toString();
                 signInFirebase(userEmail, userPassword);
+            }
+        });
+        login_reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }
