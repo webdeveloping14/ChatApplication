@@ -40,17 +40,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ProfileSetupActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 101;
 
     private CardView profileImageCard;
     private ImageView profileImageView;
     private View loadingLayout;
     private TextView loadingText;
     private TextInputEditText statusEditText;
+    private View imageLoadingProgress;
 
     private Uri currentPhotoUri;
     private String profilePhotoPath;
@@ -79,6 +83,29 @@ public class ProfileSetupActivity extends AppCompatActivity {
                     handleGalleryImage(result.getData().getData());
                 }
             });
+
+    // Permission launchers
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (isGranted) {
+                            openCamera();
+                        } else {
+                            Toast.makeText(this, getString(R.string.camera_permission_required),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+    private final ActivityResultLauncher<String> requestStoragePermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (isGranted) {
+                            openGallery();
+                        } else {
+                            Toast.makeText(this, getString(R.string.storage_permission_required),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +138,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         loadingLayout = findViewById(R.id.loading_layout);
         loadingText = findViewById(R.id.loading_text);
         statusEditText = findViewById(R.id.status_profile);
+        imageLoadingProgress = findViewById(R.id.image_loading_progress);
 
         FloatingActionButton cameraBtn = findViewById(R.id.camera_btn);
         MaterialButton saveButton = findViewById(R.id.save_button);
@@ -125,6 +153,8 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void loadUserProfileFromFirebase() {
+        if (currentUser == null) return;
+
         String userId = currentUser.getUid();
 
         loadingLayout.setVisibility(View.VISIBLE);
@@ -133,23 +163,15 @@ public class ProfileSetupActivity extends AppCompatActivity {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        UserProfile profile = documentSnapshot.toObject(UserProfile.class);
+                        String status = documentSnapshot.getString("status");
+                        previousImageUrl = documentSnapshot.getString("profileImageUrl");
 
-                        if (profile != null) {
-                            if (profile.getStatus() != null && !profile.getStatus().isEmpty()) {
-                                statusEditText.setText(profile.getStatus());
-                            }
+                        if (status != null && !status.isEmpty()) {
+                            statusEditText.setText(status);
+                        }
 
-                            if (profile.getProfileImageUrl() != null && !profile.getProfileImageUrl().isEmpty()) {
-                                previousImageUrl = profile.getProfileImageUrl();
-                                Glide.with(this)
-                                        .load(profile.getProfileImageUrl())
-                                        .apply(new RequestOptions()
-                                                .placeholder(R.drawable.default_profile)
-                                                .error(R.drawable.default_profile)
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL))
-                                        .into(profileImageView);
-                            }
+                        if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+                            loadProfileImage(previousImageUrl);
                         }
                     }
                     loadingLayout.setVisibility(View.GONE);
@@ -161,6 +183,16 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 });
     }
 
+    private void loadProfileImage(String imageUrl) {
+        Glide.with(this)
+                .load(imageUrl)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.default_profile)
+                        .error(R.drawable.default_profile)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(profileImageView);
+    }
+
     private void showImageSourceDialog() {
         String[] options = {getString(R.string.take_photo), getString(R.string.choose_from_gallery)};
 
@@ -170,17 +202,27 @@ public class ProfileSetupActivity extends AppCompatActivity {
             if (which == 0) {
                 checkCameraPermissionAndOpenCamera();
             } else {
-                openGallery();
+                checkStoragePermissionAndOpenGallery();
             }
         });
         builder.show();
     }
 
     private void checkCameraPermissionAndOpenCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         } else {
             openCamera();
+        }
+    }
+
+    private void checkStoragePermissionAndOpenGallery() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        } else {
+            openGallery();
         }
     }
 
@@ -195,7 +237,13 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri);
                 takePictureLauncher.launch(takePictureIntent);
+            } else {
+                Toast.makeText(this, getString(R.string.error_creating_image_file),
+                        Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, getString(R.string.no_camera_app_found),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -215,11 +263,19 @@ public class ProfileSetupActivity extends AppCompatActivity {
             return image;
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, getString(R.string.error_creating_image_file),
+                    Toast.LENGTH_SHORT).show();
         }
         return null;
     }
 
     private void handleCameraImage() {
+        if (currentPhotoUri == null) {
+            Toast.makeText(this, getString(R.string.error_loading_image),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         isPhotoChanged = true;
         showImageLoadingProgress(true);
 
@@ -234,16 +290,27 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void handleGalleryImage(Uri imageUri) {
-        if (imageUri == null) return;
+        if (imageUri == null) {
+            Toast.makeText(this, getString(R.string.error_loading_image),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         isPhotoChanged = true;
         showImageLoadingProgress(true);
 
         try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+
+            // Create a temporary file for the selected image
             File photoFile = createImageFile();
             if (photoFile != null) {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                currentPhotoUri = Uri.fromFile(photoFile);
                 processAndDisplayImage(bitmap);
+            } else {
+                showImageLoadingProgress(false);
+                Toast.makeText(this, getString(R.string.error_creating_image_file),
+                        Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -253,13 +320,22 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void processAndDisplayImage(Bitmap bitmap) {
+        if (bitmap == null || profilePhotoPath == null) {
+            showImageLoadingProgress(false);
+            Toast.makeText(this, getString(R.string.error_processing_image),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
+            // Compress and save the bitmap to a file
             File imageFile = new File(profilePhotoPath);
             FileOutputStream out = new FileOutputStream(imageFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
             out.flush();
             out.close();
 
+            // Display the image
             Glide.with(this)
                     .load(imageFile)
                     .apply(new RequestOptions()
@@ -278,41 +354,78 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void showImageLoadingProgress(boolean show) {
-        findViewById(R.id.image_loading_progress).setVisibility(show ? View.VISIBLE : View.GONE);
+        imageLoadingProgress.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void saveProfileAndNavigate() {
+        if (currentUser == null) {
+            Toast.makeText(this, getString(R.string.user_not_logged_in),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         loadingLayout.setVisibility(View.VISIBLE);
         loadingText.setText(R.string.updating_profile);
 
         String userId = currentUser.getUid();
         String status = statusEditText.getText().toString().trim();
 
-        UserProfile profile = new UserProfile();
-        profile.setStatus(status);
+        Map<String, Object> profileUpdates = new HashMap<>();
+        profileUpdates.put("status", status);
 
-        if (!isPhotoChanged && previousImageUrl != null) {
-            profile.setProfileImageUrl(previousImageUrl);
-            saveUserProfile(userId, profile);
-        }
-        else if (isPhotoChanged && profilePhotoPath != null) {
-            uploadProfileImageAndSaveProfile(userId, profile);
+        if (isPhotoChanged && profilePhotoPath != null) {
+            uploadProfileImageAndSaveProfile(userId, profileUpdates);
         } else {
-            saveUserProfile(userId, profile);
+            // Keep the previous image URL if the image hasn't changed
+            if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+                profileUpdates.put("profileImageUrl", previousImageUrl);
+            }
+            saveUserProfile(userId, profileUpdates);
         }
     }
 
-    private void uploadProfileImageAndSaveProfile(String userId, UserProfile profile) {
+    private void uploadProfileImageAndSaveProfile(String userId, Map<String, Object> profileUpdates) {
+        if (profilePhotoPath == null) {
+            saveUserProfile(userId, profileUpdates);
+            return;
+        }
+
+        File imageFile = new File(profilePhotoPath);
+        if (!imageFile.exists()) {
+            Toast.makeText(this, getString(R.string.error_image_not_found),
+                    Toast.LENGTH_SHORT).show();
+            loadingLayout.setVisibility(View.GONE);
+            return;
+        }
+
         StorageReference imageRef = storageRef.child("profile_images/" + userId + ".jpg");
+        Uri fileUri = Uri.fromFile(imageFile);
 
-        Uri fileUri = Uri.fromFile(new File(profilePhotoPath));
+        // First delete existing image if there was one
+        if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+            StorageReference oldImageRef = storage.getReferenceFromUrl(previousImageUrl);
+            oldImageRef.delete().addOnCompleteListener(task -> {
+                // Continue with upload regardless of deletion success
+                performImageUpload(imageRef, fileUri, userId, profileUpdates);
+            });
+        } else {
+            performImageUpload(imageRef, fileUri, userId, profileUpdates);
+        }
+    }
 
+    private void performImageUpload(StorageReference imageRef, Uri fileUri,
+                                    String userId, Map<String, Object> profileUpdates) {
         imageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     // Get download URL
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        profile.setProfileImageUrl(uri.toString());
-                        saveUserProfile(userId, profile);
+                        profileUpdates.put("profileImageUrl", uri.toString());
+                        saveUserProfile(userId, profileUpdates);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(ProfileSetupActivity.this,
+                                "Failed to get download URL: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                        loadingLayout.setVisibility(View.GONE);
                     });
                 })
                 .addOnFailureListener(e -> {
@@ -323,11 +436,14 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveUserProfile(String userId, UserProfile profile) {
+    private void saveUserProfile(String userId, Map<String, Object> profileUpdates) {
         db.collection("users").document(userId)
-                .set(profile, SetOptions.merge())
+                .set(profileUpdates, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
                     loadingLayout.setVisibility(View.GONE);
+                    Toast.makeText(ProfileSetupActivity.this,
+                            getString(R.string.profile_updated_successfully),
+                            Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(ProfileSetupActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -343,13 +459,22 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, getString(R.string.camera_permission_required), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.camera_permission_required),
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, getString(R.string.storage_permission_required),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
