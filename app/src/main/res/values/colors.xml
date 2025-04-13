@@ -48,4 +48,6 @@
     <color name="success">#4CB05E</color>
     <color name="transparent">#00000000</color>
     <color name="semiTransparent">#80000000</color>
+    <color name="textTertiary">#9E9E9E</color>
+    <color name="cardBackground">#FFFFFF</color>
 </resources>
