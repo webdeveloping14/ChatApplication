@@ -23,7 +23,6 @@
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="error_loading_image">Error loading image</string>
     <string name="error_saving_image">Error saving image</string>
-    <string name="camera_permission_required">Camera permission is required to take a photo</string>
     <string name="camera_permission_required">Camera permission is required to take photos</string>
     <string name="storage_permission_required">Storage permission is required to select photos</string>
 </resources>
