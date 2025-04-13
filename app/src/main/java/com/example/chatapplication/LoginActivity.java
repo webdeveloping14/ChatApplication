@@ -84,14 +84,12 @@ public class LoginActivity extends AppCompatActivity {
                     });
         });
 
-        // Login Button
         Login_btn.setOnClickListener(view -> {
             String userEmail = email.getText().toString().trim();
             String userPassword = password.getText().toString().trim();
             signInFirebase(userEmail, userPassword);
         });
 
-        // Navigate to Register
         login_reg.setOnClickListener(view -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
@@ -103,13 +101,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
-            Intent intent = new Intent(LoginActivity.this, ProfileSetupActivity.class); // or MainActivity
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
     }
 
     public void signInFirebase(@NonNull String userEmail, String userPassword) {
-        // Validate input
         if (TextUtils.isEmpty(userEmail)) {
             email.setError("Email is required");
             return;

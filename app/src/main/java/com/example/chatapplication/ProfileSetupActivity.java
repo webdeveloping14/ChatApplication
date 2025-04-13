@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -379,47 +380,42 @@ public class ProfileSetupActivity extends AppCompatActivity {
         }
     }
 
-    private void performImageUpload(StorageReference imageRef, Uri fileUri,
-                                    String userId, Map<String, Object> profileUpdates) {
+    private void performImageUpload(StorageReference imageRef, Uri fileUri, String userId, Map<String, Object> profileUpdates) {
+        loadingLayout.setVisibility(View.VISIBLE); // Show loading
+
         imageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         profileUpdates.put("profileImageUrl", uri.toString());
-                        saveUserProfile(userId, profileUpdates);
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(ProfileSetupActivity.this,
-                                "Failed to get download URL: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                        loadingLayout.setVisibility(View.GONE);
+                        FirebaseDatabase.getInstance().getReference("users").child(userId)
+                                .updateChildren(profileUpdates)
+                                .addOnCompleteListener(task -> {
+                                    loadingLayout.setVisibility(View.GONE); // Hide loading
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(ProfileSetupActivity.this,
-                            "Failed to upload image: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                    loadingLayout.setVisibility(View.GONE);
+                    loadingLayout.setVisibility(View.GONE); // Hide loading
+                    Toast.makeText(getApplicationContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void saveUserProfile(String userId, Map<String, Object> profileUpdates) {
         db.collection("users").document(userId)
-                .set(profileUpdates, SetOptions.merge())
+                .update(profileUpdates)
                 .addOnSuccessListener(aVoid -> {
                     loadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(ProfileSetupActivity.this,
-                            getString(R.string.profile_updated_successfully),
-                            Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(ProfileSetupActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    Toast.makeText(this, "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    finish(); // Or navigate somewhere
                 })
                 .addOnFailureListener(e -> {
                     loadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(ProfileSetupActivity.this,
-                            "Failed to save profile: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "❌ Failed to save profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }
