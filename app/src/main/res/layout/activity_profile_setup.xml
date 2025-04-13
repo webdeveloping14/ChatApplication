@@ -203,43 +203,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_marginEnd="8dp"
             android:elevation="4dp"
             android:fontFamily="@font/montserrat_semibold"
+            android:gravity="center|center_horizontal"
             android:letterSpacing="0.0"
             android:stateListAnimator="@animator/button_state_list_animator"
             android:text="@string/save_profile"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:cornerRadius="12dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/skip_button"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:letterSpacing="0.0"
-            android:stateListAnimator="@animator/button_state_list_animator_outlined"
-            android:text="@string/skip_for_now"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="16sp"
-            app:cornerRadius="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@color/ripple_color"
-            app:strokeColor="@color/button_stroke_color"
-            app:strokeWidth="1.5dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

@@ -1,15 +1,21 @@
 <resources>
     <string name="app_name">ChatApplication</string>
-    <string name="profile_setup_title">Complete Your Profile</string>
-    <string name="profile_setup_subtitle">Add a profile picture and status to personalize your account</string>
-    <string name="app_logo_description">Application logo</string>
-    <string name="profile_image_description">Profile image</string>
-    <string name="change_profile_picture">Change profile picture</string>
-    <string name="tap_to_change_photo">Tap to change profile photo</string>
+    <string name="skip_for_now">Skip for now</string>
+    <string name="profile_setup_title">Set Up Your Profile</string>
+    <string name="profile_setup_subtitle">Personalize your profile by adding a photo and status</string>
+    <string name="app_logo_description">App Logo</string>
+    <string name="profile_image_description">Profile Image</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
+    <string name="tap_to_change_photo">Tap to change photo</string>
     <string name="status_hint">Status</string>
     <string name="status_icon_description">Status icon</string>
-    <string name="default_status">Hey there! I\'m using Chat App</string>
+    <string name="default_status">Hi there! I\'m using this app.</string>
     <string name="save_profile">Save Profile</string>
-    <string name="skip_for_now">Skip for now</string>
-    <string name="updating_profile">Updating profile...</string>
+    <string name="updating_profile">Updating profile…</string>
+    <string name="loading_profile">Loading profile…</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="error_loading_image">Error loading image</string>
+    <string name="error_saving_image">Error saving image</string>
+    <string name="camera_permission_required">Camera permission is required to take a photo</string>
 </resources>

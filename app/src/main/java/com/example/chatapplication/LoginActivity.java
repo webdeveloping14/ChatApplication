@@ -10,7 +10,6 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,13 +23,18 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
     private TextView login_reg, forgot_password;
     private EditText email, password;
     private Button Login_btn;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private ProgressBar progressBar;
+
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,79 +45,133 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Initialize Firebase instances
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // UI bindings
         login_reg = findViewById(R.id.register_log);
         email = findViewById(R.id.email_log);
         password = findViewById(R.id.password_log);
         Login_btn = findViewById(R.id.login_button);
         forgot_password = findViewById(R.id.forgot_password);
+        progressBar = findViewById(R.id.progress_bar);
 
-        forgot_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = ((TextInputEditText) findViewById(R.id.email_log)).getText().toString().trim();
+        // Forgot Password
+        forgot_password.setOnClickListener(view -> {
+            String emailInput = ((TextInputEditText) findViewById(R.id.email_log)).getText().toString().trim();
 
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(LoginActivity.this, "Please enter your email first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                ProgressBar progressBar = findViewById(R.id.progress_bar);
-                progressBar.setVisibility(View.VISIBLE);
-
-                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                progressBar.setVisibility(View.GONE);
-
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Password reset email sent to " + email,
-                                            Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Failed to send reset email: " + task.getException().getMessage(),
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-
+            if (TextUtils.isEmpty(emailInput)) {
+                Toast.makeText(LoginActivity.this, "Please enter your email first", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            progressBar.setVisibility(View.VISIBLE);
+
+            auth.sendPasswordResetEmail(emailInput)
+                    .addOnCompleteListener(task -> {
+                        progressBar.setVisibility(View.GONE);
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this,
+                                    "Password reset email sent to " + emailInput,
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this,
+                                    "Failed to send reset email: " + task.getException().getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
-        Login_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String userEmail = email.getText().toString();
-                String userPassword = password.getText().toString();
-                signInFirebase(userEmail, userPassword);
-            }
+
+        // Login Button
+        Login_btn.setOnClickListener(view -> {
+            String userEmail = email.getText().toString().trim();
+            String userPassword = password.getText().toString().trim();
+            signInFirebase(userEmail, userPassword);
         });
-        login_reg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
+
+        // Navigate to Register
+        login_reg.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(LoginActivity.this, ProfileSetupActivity.class); // or MainActivity
+            startActivity(intent);
+        }
+    }
+
     public void signInFirebase(@NonNull String userEmail, String userPassword) {
-        if (userEmail.isEmpty() || userPassword.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+        // Validate input
+        if (TextUtils.isEmpty(userEmail)) {
+            email.setError("Email is required");
             return;
         }
 
+        if (TextUtils.isEmpty(userPassword)) {
+            password.setError("Password is required");
+            return;
+        }
+
+        progressBar.setVisibility(View.VISIBLE);
+
         auth.signInWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(this, task -> {
+                    progressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user != null) {
+                            checkUserProfileAndNavigate(user);
                         }
+                    } else {
+                        Toast.makeText(LoginActivity.this,
+                                "Authentication failed: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
+                });
+    }
+
+    private void checkUserProfileAndNavigate(FirebaseUser user) {
+        db.collection("users").document(user.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        createBasicUserProfile(user);
+                    }
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(LoginActivity.this,
+                            "Error checking profile: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void createBasicUserProfile(FirebaseUser user) {
+        UserProfile profile = new UserProfile();
+        profile.setEmail(user.getEmail());
+        if (user.getDisplayName() != null) {
+            profile.setDisplayName(user.getDisplayName());
+        }
+
+        db.collection("users").document(user.getUid())
+                .set(profile)
+                .addOnSuccessListener(aVoid -> {
+                    startActivity(new Intent(LoginActivity.this, ProfileSetupActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(LoginActivity.this,
+                            "Error creating profile: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
                 });
     }
 }
