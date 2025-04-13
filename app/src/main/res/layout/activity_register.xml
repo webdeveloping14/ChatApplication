@@ -8,117 +8,159 @@
     android:id="@+id/main"
     tools:context=".RegisterActivity">
 
+    <!-- App Logo/Brand Image -->
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/app_logo"
+        android:contentDescription="App Logo"
+        app:layout_constraintBottom_toTopOf="@+id/registration_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/registration_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4">
+        app:layout_constraintVertical_bias="0.45">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="28dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Create Account"
                 android:textAlignment="center"
                 android:textColor="@color/primary_color"
-                android:textSize="24sp" />
+                android:textSize="26sp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="18dp"
                 android:hint="Username"
-                app:startIconDrawable="@drawable/ic_person">
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeColor="@color/primary_color"
+                app:hintTextColor="@color/primary_color"
+                app:startIconDrawable="@drawable/ic_person"
+                app:startIconTint="@color/primary_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/username_reg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:fontFamily="@font/montserrat"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="18dp"
                 android:hint="Email"
-                app:startIconDrawable="@drawable/ic_email">
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeColor="@color/primary_color"
+                app:hintTextColor="@color/primary_color"
+                app:startIconDrawable="@drawable/ic_email"
+                app:startIconTint="@color/primary_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_reg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:fontFamily="@font/montserrat" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="18dp"
                 android:hint="Password"
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeColor="@color/primary_color"
+                app:hintTextColor="@color/primary_color"
                 app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock">
+                app:endIconTint="@color/primary_color"
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="@color/primary_color"
+                app:passwordToggleTint="@color/primary_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_reg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/montserrat" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
                 android:hint="Confirm Password"
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeColor="@color/primary_color"
+                app:hintTextColor="@color/primary_color"
                 app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock">
+                app:endIconTint="@color/primary_color"
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="@color/primary_color"
+                app:passwordToggleTint="@color/primary_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/confirm_password_reg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/montserrat" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/register_button"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="Register"
+                android:layout_height="60dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="CREATE ACCOUNT"
                 android:textSize="16sp"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="12dp"
+                android:letterSpacing="0.05"
+                app:elevation="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,8 +173,9 @@
                     android:id="@+id/login_reg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_semibold"
+                    android:fontFamily="@font/montserrat_bold"
                     android:text="Login"
+                    android:padding="4dp"
                     android:textColor="@color/accent_color" />
 
             </LinearLayout>
@@ -141,11 +184,33 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- Decorative elements -->
+    <View
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/circle_accent"
+        android:alpha="0.6"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="-40dp"
+        android:layout_marginStart="-40dp" />
+
+    <View
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/circle_primary"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="-30dp"
+        android:layout_marginEnd="-20dp" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:indeterminateTint="@color/primary_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
