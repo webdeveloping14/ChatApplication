@@ -34,4 +34,18 @@
     <color name="success_color">#4CAF50</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="textPrimary">#262626</color>
+    <color name="textSecondary">#8E8E8E</color>
+    <color name="textLight">#F5F5F5</color>
+    <color name="background">#FFFFFF</color>
+    <color name="backgroundLight">#FAFAFA</color>
+    <color name="backgroundDark">#121212</color>
+    <color name="divider">#DBDBDB</color>
+    <color name="highlightColor">#F58529</color>
+    <color name="lightBlue">#C13584</color>
+    <color name="link">#0095F6</color>
+    <color name="error">#ED4956</color>
+    <color name="success">#4CB05E</color>
+    <color name="transparent">#00000000</color>
+    <color name="semiTransparent">#80000000</color>
 </resources>
