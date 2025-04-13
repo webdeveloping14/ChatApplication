@@ -117,16 +117,13 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, save user info to database
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                // Create a User object or HashMap to store in the database
                                 Map<String, Object> userValues = new HashMap<>();
                                 userValues.put("username", username);
                                 userValues.put("email", email);
                                 userValues.put("createdAt", System.currentTimeMillis());
 
-                                // Save user info to Firebase Database
                                 mDatabase.child("users").child(user.getUid()).setValue(userValues)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -138,8 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                             "Registration successful!",
                                                             Toast.LENGTH_SHORT).show();
 
-                                                    // Navigate to main activity or login
-                                                    navigateToMainActivity();
+                                                    navigateToProfileSetupActivity();
                                                 } else {
                                                     Toast.makeText(RegisterActivity.this,
                                                             "Failed to save user data: " + task.getException().getMessage(),
@@ -158,7 +154,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void navigateToMainActivity() {
+    private void navigateToProfileSetupActivity() {
         Intent intent = new Intent(RegisterActivity.this, ProfileSetupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
