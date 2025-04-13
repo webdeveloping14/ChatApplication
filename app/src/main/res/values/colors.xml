@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="primary_color">#1E88E5</color>
-    <color name="primary_dark_color">#1565C0</color>
-    <color name="accent_color">#FF5722</color>
-    <color name="background_color">#F5F5F5</color>
-    <color name="text_color">#212121</color>
     <color name="text_secondary_color">#757575</color>
-    <color name="divider_color">#BDBDBD</color>
-    <color name="error_color">#F44336</color>
-    <color name="success_color">#4CAF50</color>
     <color name="online_status">#4CAF50</color>
     <color name="offline_status">#9E9E9E</color>
     <color name="colorPrimary">#5E72E4</color>
@@ -27,4 +17,21 @@
     <color name="colorDivider">#E9ECEF</color>
     <color name="colorOverlay">#66000000</color>
     <color name="colorTransparent">#00000000</color>
+    <color name="primary_color">#2196F3</color>
+    <color name="primary_dark_color">#1976D2</color>
+    <color name="primary_light_color">#BBDEFB</color>
+    <color name="accent_color">#FF4081</color>
+    <color name="text_color">#212121</color>
+    <color name="text_color_secondary">#757575</color>
+    <color name="secondary_text_color">#616161</color>
+    <color name="background_color">#FAFAFA</color>
+    <color name="surface_color">#FFFFFF</color>
+    <color name="divider_color">#E0E0E0</color>
+    <color name="button_stroke_color">#BDBDBD</color>
+    <color name="ripple_color">#1A000000</color>
+    <color name="text_input_stroke_color">#BDBDBD</color>
+    <color name="error_color">#F44336</color>
+    <color name="success_color">#4CAF50</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 </resources>
