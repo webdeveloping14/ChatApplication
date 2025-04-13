@@ -27,6 +27,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -122,7 +125,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 Map<String, Object> userValues = new HashMap<>();
                                 userValues.put("username", username);
                                 userValues.put("email", email);
-                                userValues.put("createdAt", System.currentTimeMillis());
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                                String currentTime = sdf.format(new Date());
+                                userValues.put("createdAt", currentTime);
 
                                 mDatabase.child("users").child(user.getUid()).setValue(userValues)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
