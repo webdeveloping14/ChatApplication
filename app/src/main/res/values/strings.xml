@@ -44,5 +44,8 @@
     <string name="personal_info">Personal Information</string>
     <string name="location_hint">Your location</string>
     <string name="location_icon_description">Location icon</string>
-    <string name="cancel">Cancel</string>w
+    <string name="cancel">Cancel</string>
+    <string name="display_name_hint">Display Name</string>
+    <string name="name_icon_description">User name icon</string>
+    <string name="interests_label">Select your interests</string>
 </resources>

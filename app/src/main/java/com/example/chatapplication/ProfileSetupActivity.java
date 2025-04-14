@@ -53,7 +53,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private ImageView profileImageView;
     private View loadingLayout;
     private TextView loadingText;
-    private TextInputEditText statusEditText;
+    private TextInputEditText statusEditText, nameEditText;
     private View imageLoadingProgress;
 
     private Uri currentPhotoUri;
@@ -121,6 +121,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         loadingLayout = findViewById(R.id.loading_layout);
         loadingText = findViewById(R.id.loading_text);
         statusEditText = findViewById(R.id.status_profile);
+        nameEditText = findViewById(R.id.display_name);
         imageLoadingProgress = findViewById(R.id.image_loading_progress);
 
         FloatingActionButton cameraBtn = findViewById(R.id.camera_btn);
@@ -147,12 +148,15 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String status = documentSnapshot.getString("status");
+                        String display = documentSnapshot.getString("Name");
                         previousImageUrl = documentSnapshot.getString("profileImageUrl");
 
                         if (status != null && !status.isEmpty()) {
                             statusEditText.setText(status);
                         }
-
+                        if (display != null && !display.isEmpty()) {
+                            nameEditText.setText(display);
+                        }
                         if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
                             loadProfileImage(previousImageUrl);
                         }

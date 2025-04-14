@@ -8,21 +8,13 @@
     android:background="@color/background_color"
     tools:context=".ProfileSetupActivity">
 
-    <View
-        android:id="@+id/status_bar_scrim"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/status_bar_gradient"
-        app:layout_constraintHeight_percent="0.03"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
         android:overScrollMode="never"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@+id/buttons_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,24 +22,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="32dp">
-
-            <ImageView
-                android:id="@+id/decorative_bg_pattern"
-                android:layout_width="match_parent"
-                android:layout_height="240dp"
-                android:alpha="0.05"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/bg_pattern"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:paddingBottom="96dp">
 
             <TextView
                 android:id="@+id/title_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="@string/profile_setup_title"
@@ -68,7 +50,7 @@
                 android:fontFamily="@font/montserrat"
                 android:text="@string/profile_setup_subtitle"
                 android:textAlignment="center"
-                android:textColor="@color/text_color_secondary"
+                android:textColor="@color/text_color"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -78,10 +60,10 @@
                 android:id="@+id/profile_image_card"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:layout_marginTop="48dp"
-                android:elevation="12dp"
+                android:layout_marginTop="40dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:stateListAnimator="@animator/card_lift_animation"
                 app:cardCornerRadius="90dp"
                 app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -94,13 +76,12 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/profile_image_description"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/default_profile"
-                    android:transitionName="profile_image_transition" />
+                    android:src="@drawable/default_profile" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/enhanced_profile_image_overlay" />
+                    android:background="@drawable/profile_image_overlay" />
 
                 <ProgressBar
                     android:id="@+id/image_loading_progress"
@@ -120,7 +101,7 @@
                 android:src="@drawable/ic_camera"
                 app:backgroundTint="@color/accent_color"
                 app:borderWidth="0dp"
-                app:elevation="12dp"
+                app:elevation="8dp"
                 app:fabSize="mini"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image_card"
                 app:layout_constraintEnd_toEndOf="@+id/profile_image_card"
@@ -128,19 +109,18 @@
                 app:layout_constraintStart_toStartOf="@+id/profile_image_card"
                 app:layout_constraintTop_toTopOf="@+id/profile_image_card"
                 app:layout_constraintVertical_bias="0.95"
-                app:rippleColor="@color/accent_light"
+                app:rippleColor="@color/white"
                 app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/change_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/montserrat_medium"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/tap_to_change_photo"
                 android:textColor="@color/accent_color"
                 android:textSize="14sp"
-                android:letterSpacing="0.02"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_image_card" />
@@ -150,26 +130,51 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
                 android:background="@color/divider_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/change_photo" />
 
-            <TextView
-                android:id="@+id/personal_info_title"
-                android:layout_width="wrap_content"
+            <!-- Name first -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/name_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/montserrat_semibold"
-                android:text="@string/personal_info"
-                android:textColor="@color/text_color"
-                android:textSize="18sp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:hint="@string/display_name_hint"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/text_input_stroke_color"
+                app:boxStrokeWidth="1.5dp"
+                app:endIconMode="clear_text"
+                app:hintTextColor="@color/accent_color"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider" />
+                app:layout_constraintTop_toBottomOf="@+id/divider"
+                app:startIconContentDescription="@string/name_icon_description"
+                app:startIconDrawable="@drawable/ic_personn"
+                app:startIconTint="@color/accent_color">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/display_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:inputType="textPersonName"
+                    android:maxLength="30"
+                    android:padding="16dp"
+                    android:textColor="@color/text_color"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Status second -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/status_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -179,22 +184,22 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="24dp"
                 android:hint="@string/status_hint"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/text_input_stroke_color"
                 app:boxStrokeWidth="1.5dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="100"
-                app:counterTextAppearance="@style/CounterTextAppearance"
+                app:counterTextColor="@color/text_color_secondary"
                 app:endIconMode="clear_text"
-                app:endIconTint="@color/accent_color"
                 app:hintTextColor="@color/accent_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/personal_info_title"
+                app:layout_constraintTop_toBottomOf="@+id/name_input_layout"
                 app:startIconContentDescription="@string/status_icon_description"
-                app:startIconDrawable="@drawable/ic_status_enhanced"
+                app:startIconDrawable="@drawable/ic_status"
                 app:startIconTint="@color/accent_color">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -211,43 +216,6 @@
                     android:text="@string/default_status"
                     android:textColor="@color/text_color"
                     android:textSize="16sp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/location_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:hint="@string/location_hint"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeWidth="1.5dp"
-                app:endIconMode="clear_text"
-                app:endIconTint="@color/accent_color"
-                app:hintTextColor="@color/accent_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/status_input_layout"
-                app:startIconContentDescription="@string/location_icon_description"
-                app:startIconDrawable="@drawable/ic_location"
-                app:startIconTint="@color/accent_color">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/location_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:inputType="text"
-                    android:padding="16dp"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -257,10 +225,10 @@
         android:id="@+id/buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/enhanced_bottom_buttons_background"
-        android:elevation="16dp"
+        android:background="@drawable/bottom_buttons_background"
+        android:elevation="8dp"
         android:paddingStart="24dp"
-        android:paddingTop="24dp"
+        android:paddingTop="16dp"
         android:paddingEnd="24dp"
         android:paddingBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -268,63 +236,57 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_button"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="0dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:letterSpacing="0.0"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_color"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/accent_color"
+            app:strokeWidth="1.5dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
             android:layout_width="0dp"
             android:layout_height="56dp"
+            android:layout_marginStart="8dp"
             android:elevation="4dp"
             android:fontFamily="@font/montserrat_semibold"
-            android:gravity="center"
             android:letterSpacing="0.0"
             android:stateListAnimator="@animator/button_state_list_animator"
             android:text="@string/save_profile"
             android:textAllCaps="false"
             android:textSize="16sp"
-            app:backgroundTint="@color/primary_color"
-            app:cornerRadius="16dp"
+            app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@color/primary_light" />
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="@string/cancel"
-            android:textAllCaps="false"
-            android:textColor="@color/text_color_secondary"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/save_button"
-            app:layout_constraintEnd_toStartOf="@+id/save_button"
-            app:layout_constraintTop_toTopOf="@+id/save_button" />
-
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/copyright_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:alpha="0.7"
-        android:fontFamily="@font/montserrat"
-        android:text="US Developers | 2025"
-        android:textColor="@color/text_color_secondary"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/loading_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0"
-        android:background="#99000000"
+        android:background="#80000000"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
@@ -337,23 +299,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="16dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="32dp">
+                android:padding="24dp">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/loading_animation"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/loading_animation" />
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:indeterminateTint="@color/accent_color" />
 
                 <TextView
                     android:id="@+id/loading_text"

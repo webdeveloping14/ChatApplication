@@ -54,5 +54,6 @@
     <color name="primary_light">#C5CAE9</color>
     <color name="accent_light">#FF80AB</color>
     <color name="text_color_disabled">#9E9E9E</color>
-
+    <color name="accent_color_light">#33007AFF</color>
+    <color name="chip_default_color">#F0F0F0</color>
 </resources>
