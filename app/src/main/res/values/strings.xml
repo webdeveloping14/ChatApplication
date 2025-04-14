@@ -41,4 +41,8 @@
     <string name="loading">Loading…</string>
     <string name="error_loading_profile">Could not load profile</string>
     <string name="retry">Retry</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="location_hint">Your location</string>
+    <string name="location_icon_description">Location icon</string>
+    <string name="cancel">Cancel</string>w
 </resources>
