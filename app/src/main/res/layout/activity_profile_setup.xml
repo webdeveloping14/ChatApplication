@@ -8,7 +8,6 @@
     android:background="@color/background_color"
     tools:context=".ProfileSetupActivity">
 
-    <!-- Status bar scrim for better visual integration -->
     <View
         android:id="@+id/status_bar_scrim"
         android:layout_width="match_parent"
@@ -33,7 +32,6 @@
             android:layout_height="wrap_content"
             android:paddingBottom="32dp">
 
-            <!-- Background decorative elements -->
             <ImageView
                 android:id="@+id/decorative_bg_pattern"
                 android:layout_width="match_parent"
@@ -76,7 +74,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
 
-            <!-- Profile Image Section -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/profile_image_card"
                 android:layout_width="180dp"
@@ -115,7 +112,6 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Camera FAB with ripple effect -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/camera_btn"
                 android:layout_width="wrap_content"
@@ -161,7 +157,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/change_photo" />
 
-            <!-- Profile Information Section -->
             <TextView
                 android:id="@+id/personal_info_title"
                 android:layout_width="wrap_content"
@@ -175,7 +170,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-            <!-- Enhanced Status Input -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/status_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -189,7 +183,6 @@
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeColor="@color/input_stroke_color_state_list"
                 app:boxStrokeWidth="1.5dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="100"
@@ -221,7 +214,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Location Input -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/location_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -235,7 +227,6 @@
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeColor="@color/input_stroke_color_state_list"
                 app:boxStrokeWidth="1.5dp"
                 app:endIconMode="clear_text"
                 app:endIconTint="@color/accent_color"
@@ -262,7 +253,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <!-- Enhanced Buttons Container with Gradient Background -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttons_container"
         android:layout_width="match_parent"
@@ -277,7 +267,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Enhanced Save Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
             android:layout_width="0dp"
@@ -298,7 +287,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/primary_light" />
 
-        <!-- Cancel Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
             style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -317,7 +305,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- App info footer with enhanced styling -->
     <TextView
         android:id="@+id/copyright_text"
         android:layout_width="wrap_content"
@@ -332,7 +319,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Enhanced Loading Overlay -->
     <FrameLayout
         android:id="@+id/loading_layout"
         android:layout_width="0dp"

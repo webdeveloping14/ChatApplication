@@ -50,4 +50,9 @@
     <color name="semiTransparent">#80000000</color>
     <color name="textTertiary">#9E9E9E</color>
     <color name="cardBackground">#FFFFFF</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent_light">#FF80AB</color>
+    <color name="text_color_disabled">#9E9E9E</color>
+
 </resources>

@@ -49,11 +49,39 @@
         <item name="hintTextColor">@color/accent_color</item>
     </style>
 
-    <!-- CardView style -->
     <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
         <item name="cardElevation">4dp</item>
         <item name="cardCornerRadius">16dp</item>
         <item name="contentPadding">0dp</item>
     </style>
 
+    <style name="CounterTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/text_color_secondary</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="ProfileSetupTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Color attributes -->
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="colorSecondary">@color/accent_color</item>
+        <item name="android:colorBackground">@color/background_color</item>
+
+        <!-- Text appearance -->
+        <item name="android:textColorPrimary">@color/text_color</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+
+        <!-- Status bar and navigation bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/background_color</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Window transitions -->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+    </style>
 </resources>
