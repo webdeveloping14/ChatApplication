@@ -137,7 +137,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:hint="@string/status_hint"
                 app:boxCornerRadiusBottomEnd="12dp"
@@ -152,11 +152,13 @@
                 app:endIconMode="clear_text"
                 app:hintTextColor="@color/accent_color"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider"
                 app:startIconContentDescription="@string/status_icon_description"
                 app:startIconDrawable="@drawable/ic_status"
                 app:startIconTint="@color/accent_color">
+
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/status_profile"
