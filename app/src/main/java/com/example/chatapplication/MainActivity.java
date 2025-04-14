@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         String status = dataSnapshot.child("status").getValue(String.class);
                         String email = dataSnapshot.child("email").getValue(String.class);
-                        String name = dataSnapshot.child("Name").getValue(String.class);
+                        String name = dataSnapshot.child("name").getValue(String.class);
 
 
                         if (username != null) {
