@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private StorageReference storageReference;
     private CircleImageView profileImage;
     private TextView textUsername;
-    private TextView textBio, textEmail;
+    private TextView textBio, textEmail, textName;
     private ViewPager2 viewPager;
     private MaterialButton btnEditProfile;
     private MaterialButton btnStartChat;
@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         btnStartChat = findViewById(R.id.button_start_chat);
         progressBar = findViewById(R.id.progress_bar);
         textEmail = findViewById(R.id.text_email);
+        textName = findViewById(R.id.text_name);
+
         setupButtonListeners();
         loadProfileData();
     }
@@ -105,9 +107,11 @@ public class MainActivity extends AppCompatActivity {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         String status = dataSnapshot.child("status").getValue(String.class);
                         String email = dataSnapshot.child("email").getValue(String.class);
+                        String name = dataSnapshot.child("Name").getValue(String.class);
+
 
                         if (username != null) {
-                            User manualUser = new User(username, status, email);
+                            User manualUser = new User(username, status, email, name);
                             updateUserProfileUI(manualUser);
                         } else {
                             Toast.makeText(MainActivity.this, "Failed to get user data", Toast.LENGTH_SHORT).show();
@@ -153,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         textUsername.setText("Username: " + user.getUsername());
         textBio.setText(user.getStatus());
         textEmail.setText("Email: " + user.getEmail());
+        textName.setText("Name: " + user.getName());
         progressBar.setVisibility(View.GONE);
     }
 
@@ -160,16 +165,26 @@ public class MainActivity extends AppCompatActivity {
         private String username;
         private String status;
         private String email;
+        private String name;
         private String profileImageUrl;
         private String createdAt;
 
         public User() {
         }
 
-        public User(String username, String status, String email) {
+        public User(String username, String status, String email, String name) {
             this.username = username;
             this.status = status;
             this.email = email;
+            this.name = name;
+        }
+
+        public String getName(){
+            return name;
+        }
+
+        public void setName(String name){
+            this.name = name;
         }
 
         public String getUsername() {

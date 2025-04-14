@@ -140,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
                     } else {
                         createBasicUserProfile(user);
                     }

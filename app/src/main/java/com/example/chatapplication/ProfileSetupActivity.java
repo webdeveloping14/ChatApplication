@@ -343,9 +343,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         String userId = currentUser.getUid();
         String status = statusEditText.getText().toString().trim();
-
+        String name = nameEditText.getText().toString().trim();
         Map<String, Object> profileUpdates = new HashMap<>();
         profileUpdates.put("status", status);
+        profileUpdates.put("name", name);
 
         if (isPhotoChanged && profilePhotoPath != null) {
             uploadProfileImageAndSaveProfile(userId, profileUpdates);
