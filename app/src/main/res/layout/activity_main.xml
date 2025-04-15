@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:paddingVertical="12dp"
-                android:text="New Chat"
+                android:text="Start Chat"
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 app:cornerRadius="8dp"
@@ -154,22 +154,6 @@
                 app:iconTint="@color/colorPrimary"
                 app:strokeColor="@color/colorPrimary" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_recent_chat"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingVertical="12dp"
-                android:text="Recent Chat"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                app:cornerRadius="8dp"
-                app:icon="@drawable/ic_chat"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="@color/colorPrimary"
-                app:strokeColor="@color/colorPrimary" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
