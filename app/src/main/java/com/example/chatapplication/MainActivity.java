@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Edit Profile clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
+                startActivity(intent);
             }
         });
 
