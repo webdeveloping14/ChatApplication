@@ -3,6 +3,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -75,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
         btnStartChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Start Chat clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, UserListActivity.class);
+                startActivity(intent);
             }
         });
     }
