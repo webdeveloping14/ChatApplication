@@ -48,4 +48,22 @@
     <string name="display_name_hint">Display Name</string>
     <string name="name_icon_description">User name icon</string>
     <string name="interests_label">Select your interests</string>
+    <string name="registered_users">Registered Users</string>
+    <string name="total_users">Total Users</string>
+    <string name="active_now">Active Now</string>
+    <string name="new_today">New Today</string>
+    <string name="all_users">All Users</string>
+    <string name="active">Active</string>
+    <string name="admins">Admins</string>
+    <string name="no_users_found">No Users Found</string>
+    <string name="no_users_message">There are no registered users to display at this time. Try refreshing or check back later.</string>
+    <string name="refresh">Refresh</string>
+    <string name="loading_users">Loading Users…</string>
+    <string name="add_new_user">Add New User</string>
+    <string name="more_options">More Options</string>
+    <string name="email">Email</string>
+    <string name="developer">Developer</string>
+    <string name="verified">Verified</string>
+    <string name="message">Message</string>
+    <string name="view_profile">View Profile</string>
 </resources>
