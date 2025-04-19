@@ -139,7 +139,8 @@ public class LoginActivity extends AppCompatActivity {
         db.collection("users").document(user.getUid()).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
                         finish();
                     } else {
                         createBasicUserProfile(user);

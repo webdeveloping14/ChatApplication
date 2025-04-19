@@ -1,6 +1,7 @@
 package com.example.chatapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         } else {
             holder.statusTextView.setVisibility(View.GONE);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("userId", user.getId());
+            intent.putExtra("userName", user.getUsername());
+            intent.putExtra("userImage", user.getProfileImageUrl());
+            context.startActivity(intent);
+        });
 
         // Parse and format the timestamp
         try {

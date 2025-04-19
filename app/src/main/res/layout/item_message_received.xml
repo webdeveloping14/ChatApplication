@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_message_profile"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/default_profile" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="64dp"
+        android:layout_toEndOf="@+id/image_message_profile"
+        android:background="@drawable/received_message_background"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/text_message_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="270dp"
+            android:text="Message text goes here"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"
+            android:text="11:40 PM"
+            android:textColor="#777777"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</RelativeLayout>
