@@ -47,7 +47,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
@@ -55,7 +54,6 @@
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toTopOf="@id/profileImageView"
-            app:layout_constraintEnd_toStartOf="@id/menuButton"
             tools:text="Shaurya" />
 
         <TextView
@@ -64,14 +62,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toBottomOf="@id/nameTextView"
-            app:layout_constraintEnd_toStartOf="@id/menuButton"
             tools:text="\@shaurya.cpp" />
 
         <TextView
@@ -80,7 +76,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#8E8E8E"
@@ -88,22 +83,7 @@
             android:textStyle="italic"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toBottomOf="@id/usernameTextView"
-            app:layout_constraintEnd_toStartOf="@id/menuButton"
             tools:text="Developer here...!!" />
-
-        <ImageView
-            android:id="@+id/menuButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/more_options"
-            android:focusable="true"
-            android:padding="8dp"
-            android:src="@drawable/ic_more_vert"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#AAAAAA" />
 
         <LinearLayout
             android:id="@+id/infoContainer"
@@ -140,25 +120,6 @@
             app:layout_constraintTop_toBottomOf="@id/infoContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/messageButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:text="@string/message"
-                android:textAllCaps="false"
-                android:textColor="#2196F3"
-                android:textSize="12sp"
-                app:cornerRadius="20dp"
-                app:icon="@drawable/ic_message"
-                app:iconGravity="textStart"
-                app:iconSize="16dp"
-                app:iconTint="#2196F3"
-                app:strokeColor="#2196F3" />
-        </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
