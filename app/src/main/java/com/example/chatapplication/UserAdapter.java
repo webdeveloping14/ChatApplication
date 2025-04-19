@@ -66,7 +66,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             context.startActivity(intent);
         });
 
-        // Parse and format the timestamp
         try {
             if (user.getCreatedAt() != null && !user.getCreatedAt().isEmpty()) {
                 holder.createdAtTextView.setText("Created: " + user.getCreatedAt().substring(0, 10));
@@ -78,7 +77,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             holder.createdAtTextView.setVisibility(View.GONE);
         }
 
-        // Load profile image
         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
             Glide.with(context)
                     .load(user.getProfileImageUrl())
