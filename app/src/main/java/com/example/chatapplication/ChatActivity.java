@@ -1,13 +1,6 @@
 package com.example.chatapplication;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -16,8 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,13 +17,9 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,7 +51,24 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        initializeFields();
+        setUserDetails();
+        checkUserStatus();
+        setupRecyclerView();
+        loadMessages();
+
+        sendButton.setOnClickListener(v -> sendMessage());
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    private void initializeFields() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         db = FirebaseFirestore.getInstance();
         senderId = currentUser.getUid();
         receiverId = getIntent().getStringExtra("userId");
@@ -77,25 +81,34 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.messages_recycler_view);
         messageInput = findViewById(R.id.message_input);
         sendButton = findViewById(R.id.send_button);
+
+        messageList = new ArrayList<>();
+    }
+
+    private void setUserDetails() {
         username.setText(receiverName);
         if (receiverImage != null && !receiverImage.isEmpty()) {
             Glide.with(this).load(receiverImage).placeholder(R.drawable.default_profile).into(profileImage);
         }
-        checkUserStatus();
-        btnBack.setOnClickListener(v -> finish());
-        messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter(this, messageList, senderId);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(messageAdapter);
-        loadMessages();
+    }
 
-        sendButton.setOnClickListener(v -> sendMessage());
+    private void setupRecyclerView() {
+        messageAdapter = new MessageAdapter(this, messageList, senderId);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(messageAdapter);
     }
 
     private void checkUserStatus() {
+        if (receiverId == null) {
+            Toast.makeText(this, "Receiver ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("users").document(receiverId)
                 .addSnapshotListener((documentSnapshot, e) -> {
                     if (e != null) {
+                        Toast.makeText(ChatActivity.this, "Error checking user status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -107,7 +120,15 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
+        if (senderId == null || receiverId == null) {
+            Toast.makeText(this, "Sender or Receiver ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String chatId = getChatId(senderId, receiverId);
+
+        messageList.clear();
+        messageAdapter.notifyDataSetChanged();
 
         db.collection("chats")
                 .document(chatId)
@@ -115,7 +136,7 @@ public class ChatActivity extends AppCompatActivity {
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
-                        Toast.makeText(ChatActivity.this, "Error loading messages", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChatActivity.this, "Error loading messages: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -124,11 +145,11 @@ public class ChatActivity extends AppCompatActivity {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
                                 Message message = dc.getDocument().toObject(Message.class);
                                 messageList.add(message);
+                                messageAdapter.notifyItemInserted(messageList.size() - 1);
                             }
                         }
-                        messageAdapter.notifyDataSetChanged();
 
-                        if (messageList.size() > 0) {
+                        if (!messageList.isEmpty()) {
                             recyclerView.smoothScrollToPosition(messageList.size() - 1);
                         }
                     }
@@ -138,6 +159,11 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         String msg = messageInput.getText().toString().trim();
         if (TextUtils.isEmpty(msg)) {
+            return;
+        }
+
+        if (senderId == null || receiverId == null) {
+            Toast.makeText(this, "Unable to send message. User information missing.", Toast.LENGTH_SHORT).show();
             return;
         }
         messageInput.setText("");
@@ -154,14 +180,19 @@ public class ChatActivity extends AppCompatActivity {
                 .collection("messages")
                 .add(message)
                 .addOnSuccessListener(documentReference -> {
+                    // Message sent successfully
                     updateLastMessage(chatId, msg, timestamp);
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(ChatActivity.this, "Failed to send message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Failed to send message: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void updateLastMessage(String chatId, String message, long timestamp) {
+        if (senderId == null || receiverId == null) {
+            return;
+        }
+
         Map<String, Object> senderChat = new HashMap<>();
         senderChat.put("userId", receiverId);
         senderChat.put("username", receiverName);
@@ -174,7 +205,10 @@ public class ChatActivity extends AppCompatActivity {
                 .document(senderId)
                 .collection("chats")
                 .document(receiverId)
-                .set(senderChat);
+                .set(senderChat, SetOptions.merge())
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ChatActivity.this, "Failed to update sender chat: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
 
         db.collection("users")
                 .document(senderId)
@@ -210,29 +244,43 @@ public class ChatActivity extends AppCompatActivity {
                                             .document(receiverId)
                                             .collection("chats")
                                             .document(senderId)
-                                            .set(receiverChat);
+                                            .set(receiverChat, SetOptions.merge())
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(ChatActivity.this, "Failed to update receiver chat: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            });
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(ChatActivity.this, "Failed to get unread count: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 });
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ChatActivity.this, "Failed to get sender info: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private String getChatId(String user1, String user2) {
-        if (user1.compareTo(user2) < 0) {
-            return user1 + "_" + user2;
-        } else {
-            return user2 + "_" + user1;
-        }
+        return user1.compareTo(user2) < 0 ? user1 + "_" + user2 : user2 + "_" + user1;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        db.collection("users").document(senderId).update("online", true);
+        if (senderId != null) {
+            db.collection("users").document(senderId).update("online", true)
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(ChatActivity.this, "Failed to update online status", Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 
     @Override
     protected void onPause() {
-        db.collection("users").document(senderId).update("online", false);
+        if (senderId != null) {
+            db.collection("users").document(senderId).update("online", false)
+                    .addOnFailureListener(e -> {
+                    });
+        }
         super.onPause();
     }
 }

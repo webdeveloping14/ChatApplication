@@ -1,5 +1,9 @@
 package com.example.chatapplication;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class Message {
     private String senderId;
     private String receiverId;

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
-        if (message.getSenderId().equals(currentUserId)) {
+        if (message.getSenderId() != null && message.getSenderId().equals(currentUserId)) {
             return VIEW_TYPE_SENT;
         } else {
             return VIEW_TYPE_RECEIVED;
@@ -100,19 +101,32 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void bind(Message message) {
             messageText.setText(message.getMessage());
             timeText.setText(message.getTime());
-
             String senderId = message.getSenderId();
+            if (senderId != null && !senderId.isEmpty()) {
+                loadProfileImage(senderId);
+            }
+        }
+
+        private void loadProfileImage(String senderId) {
             db.collection("users").document(senderId).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String imageUrl = documentSnapshot.getString("profileImageUrl");
                             if (imageUrl != null && !imageUrl.isEmpty()) {
-                                Glide.with(context)
-                                        .load(imageUrl)
+                                // Use RequestOptions to cache the image and prevent multiple loads
+                                RequestOptions requestOptions = new RequestOptions()
                                         .placeholder(R.drawable.default_profile)
+                                        .error(R.drawable.default_profile);
+
+                                Glide.with(context.getApplicationContext())
+                                        .setDefaultRequestOptions(requestOptions)
+                                        .load(imageUrl)
                                         .into(profileImage);
                             }
                         }
+                    })
+                    .addOnFailureListener(e -> {
+                        profileImage.setImageResource(R.drawable.default_profile);
                     });
         }
     }
