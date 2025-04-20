@@ -11,7 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -25,13 +29,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private List<Message> messageList;
     private String currentUserId;
-    private FirebaseFirestore db;
+    private DatabaseReference databaseRef;
 
     public MessageAdapter(Context context, List<Message> messageList, String currentUserId) {
         this.context = context;
         this.messageList = messageList;
         this.currentUserId = currentUserId;
-        this.db = FirebaseFirestore.getInstance();
+        this.databaseRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @NonNull
@@ -108,25 +112,32 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void loadProfileImage(String senderId) {
-            db.collection("users").document(senderId).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String imageUrl = documentSnapshot.getString("profileImageUrl");
-                            if (imageUrl != null && !imageUrl.isEmpty()) {
-                                // Use RequestOptions to cache the image and prevent multiple loads
-                                RequestOptions requestOptions = new RequestOptions()
-                                        .placeholder(R.drawable.default_profile)
-                                        .error(R.drawable.default_profile);
+            databaseRef.child("users").child(senderId).child("profileImageUrl")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String imageUrl = dataSnapshot.getValue(String.class);
+                                if (imageUrl != null && !imageUrl.isEmpty()) {
+                                    // Use RequestOptions to cache the image and prevent multiple loads
+                                    RequestOptions requestOptions = new RequestOptions()
+                                            .placeholder(R.drawable.default_profile)
+                                            .error(R.drawable.default_profile);
 
-                                Glide.with(context.getApplicationContext())
-                                        .setDefaultRequestOptions(requestOptions)
-                                        .load(imageUrl)
-                                        .into(profileImage);
+                                    Glide.with(context.getApplicationContext())
+                                            .setDefaultRequestOptions(requestOptions)
+                                            .load(imageUrl)
+                                            .into(profileImage);
+                                }
+                            } else {
+                                profileImage.setImageResource(R.drawable.default_profile);
                             }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        profileImage.setImageResource(R.drawable.default_profile);
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            profileImage.setImageResource(R.drawable.default_profile);
+                        }
                     });
         }
     }

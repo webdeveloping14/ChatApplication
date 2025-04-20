@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "242938468632",
+    "firebase_url": "https://chatapk-us-default-rtdb.firebaseio.com",
     "project_id": "chatapk-us",
     "storage_bucket": "chatapk-us.firebasestorage.app"
   },
