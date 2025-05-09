@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -27,12 +25,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -55,6 +53,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private TextView loadingText;
     private TextInputEditText statusEditText, nameEditText;
     private View imageLoadingProgress;
+    private LinearProgressIndicator setupProgress;
+    private TextView progressText;
+    private MaterialButton cancelButton;
+    private MaterialButton saveButton;
 
     private Uri currentPhotoUri;
     private String profilePhotoPath;
@@ -112,6 +114,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         initViews();
         setupListeners();
+        updateProgressIndicator();
         loadUserProfileFromFirebase();
     }
 
@@ -123,17 +126,43 @@ public class ProfileSetupActivity extends AppCompatActivity {
         statusEditText = findViewById(R.id.status_profile);
         nameEditText = findViewById(R.id.display_name);
         imageLoadingProgress = findViewById(R.id.image_loading_progress);
+        setupProgress = findViewById(R.id.setup_progress);
+        progressText = findViewById(R.id.progress_text);
 
+        // Initialize the buttons
+        cancelButton = findViewById(R.id.cancel_button);
+        saveButton = findViewById(R.id.save_button);
         FloatingActionButton cameraBtn = findViewById(R.id.camera_btn);
-        MaterialButton saveButton = findViewById(R.id.save_button);
 
-        cameraBtn.setOnClickListener(v -> showImageSourceDialog());
-        saveButton.setOnClickListener(v -> saveProfileAndNavigate());
+        // Set initial progress
+        setupProgress.setProgress(66); // As specified in XML (66%)
     }
 
     private void setupListeners() {
         profileImageCard.setOnClickListener(v -> showImageSourceDialog());
         findViewById(R.id.change_photo).setOnClickListener(v -> showImageSourceDialog());
+        findViewById(R.id.camera_btn).setOnClickListener(v -> showImageSourceDialog());
+        cancelButton.setOnClickListener(v -> handleCancelAction());
+        saveButton.setOnClickListener(v -> saveProfileAndNavigate());
+    }
+
+    private void updateProgressIndicator() {
+        // Set progress indicator to 66% as shown in the XML layout
+        setupProgress.setProgress(66);
+        progressText.setText(R.string.profile_progress);
+    }
+
+    private void handleCancelAction() {
+        // Show confirmation dialog before canceling
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.cancel_profile_setup))
+                .setMessage(getString(R.string.cancel_profile_confirmation))
+                .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                    // Navigate back or to a previous screen
+                    finish();
+                })
+                .setNegativeButton(getString(R.string.no), null)
+                .show();
     }
 
     private void loadUserProfileFromFirebase() {
@@ -148,7 +177,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String status = documentSnapshot.getString("status");
-                        String display = documentSnapshot.getString("Name");
+                        String display = documentSnapshot.getString("name"); // Matches the field name in saveUserProfile method
                         previousImageUrl = documentSnapshot.getString("profileImageUrl");
 
                         if (status != null && !status.isEmpty()) {
@@ -332,6 +361,14 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void saveProfileAndNavigate() {
+        // Validate inputs first
+        String name = nameEditText.getText().toString().trim();
+        if (name.isEmpty()) {
+            nameEditText.setError(getString(R.string.name_required));
+            nameEditText.requestFocus();
+            return;
+        }
+
         if (currentUser == null) {
             Toast.makeText(this, getString(R.string.user_not_logged_in),
                     Toast.LENGTH_SHORT).show();
@@ -343,10 +380,9 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         String userId = currentUser.getUid();
         String status = statusEditText.getText().toString().trim();
-        String name = nameEditText.getText().toString().trim();
         Map<String, Object> profileUpdates = new HashMap<>();
         profileUpdates.put("status", status);
-        profileUpdates.put("name", name);
+        profileUpdates.put("name", name); // Changed from "Name" to "name" for consistency
 
         if (isPhotoChanged && profilePhotoPath != null) {
             uploadProfileImageAndSaveProfile(userId, profileUpdates);
@@ -376,10 +412,15 @@ public class ProfileSetupActivity extends AppCompatActivity {
         Uri fileUri = Uri.fromFile(imageFile);
 
         if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
-            StorageReference oldImageRef = storage.getReferenceFromUrl(previousImageUrl);
-            oldImageRef.delete().addOnCompleteListener(task -> {
+            try {
+                StorageReference oldImageRef = storage.getReferenceFromUrl(previousImageUrl);
+                oldImageRef.delete().addOnCompleteListener(task -> {
+                    performImageUpload(imageRef, fileUri, userId, profileUpdates);
+                });
+            } catch (IllegalArgumentException e) {
+                // Handle case where the URL is not a valid Firebase Storage URL
                 performImageUpload(imageRef, fileUri, userId, profileUpdates);
-            });
+            }
         } else {
             performImageUpload(imageRef, fileUri, userId, profileUpdates);
         }
@@ -392,19 +433,8 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         profileUpdates.put("profileImageUrl", uri.toString());
-                        FirebaseDatabase.getInstance().getReference("users").child(userId)
-                                .updateChildren(profileUpdates)
-                                .addOnCompleteListener(task -> {
-                                    loadingLayout.setVisibility(View.GONE); // Hide loading
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        // Update both Firestore and Realtime Database
+                        updateProfileInDatabases(userId, profileUpdates);
                     });
                 })
                 .addOnFailureListener(e -> {
@@ -413,17 +443,80 @@ public class ProfileSetupActivity extends AppCompatActivity {
                 });
     }
 
+    private void updateProfileInDatabases(String userId, Map<String, Object> profileUpdates) {
+        // Update Firestore
+        db.collection("users").document(userId)
+                .update(profileUpdates)
+                .addOnSuccessListener(aVoid -> {
+                    // Now update Realtime Database
+                    FirebaseDatabase.getInstance().getReference("users").child(userId)
+                            .updateChildren(profileUpdates)
+                            .addOnCompleteListener(task -> {
+                                loadingLayout.setVisibility(View.GONE); // Hide loading
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
+                                    // Navigate to MainActivity
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Failed to update profile in Realtime Database", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    loadingLayout.setVisibility(View.GONE); // Hide loading
+                    Toast.makeText(this, "❌ Failed to save profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
     private void saveUserProfile(String userId, Map<String, Object> profileUpdates) {
         db.collection("users").document(userId)
                 .update(profileUpdates)
                 .addOnSuccessListener(aVoid -> {
-                    loadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(this, "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
-                    finish(); // Or navigate somewhere
+                    // Also update in Realtime Database
+                    FirebaseDatabase.getInstance().getReference("users").child(userId)
+                            .updateChildren(profileUpdates)
+                            .addOnCompleteListener(task -> {
+                                loadingLayout.setVisibility(View.GONE);
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(this, "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
+                                    // Navigate to MainActivity
+                                    Intent intent = new Intent(this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(this, "Profile partially updated. Database sync failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    loadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(this, "❌ Failed to save profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    // Check if document doesn't exist yet
+                    if (e.getMessage() != null && e.getMessage().contains("NOT_FOUND")) {
+                        // Create the document instead of updating
+                        db.collection("users").document(userId)
+                                .set(profileUpdates)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Also update in Realtime Database
+                                    FirebaseDatabase.getInstance().getReference("users").child(userId)
+                                            .updateChildren(profileUpdates)
+                                            .addOnCompleteListener(task -> {
+                                                loadingLayout.setVisibility(View.GONE);
+                                                Toast.makeText(this, "✅ Profile created successfully", Toast.LENGTH_SHORT).show();
+                                                // Navigate to MainActivity
+                                                Intent intent = new Intent(this, MainActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            });
+                                })
+                                .addOnFailureListener(e2 -> {
+                                    loadingLayout.setVisibility(View.GONE);
+                                    Toast.makeText(this, "❌ Failed to create profile: " + e2.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                    } else {
+                        loadingLayout.setVisibility(View.GONE);
+                        Toast.makeText(this, "❌ Failed to save profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 }

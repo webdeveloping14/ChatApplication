@@ -66,4 +66,10 @@
     <string name="verified">Verified</string>
     <string name="message">Message</string>
     <string name="view_profile">View Profile</string>
+    <string name="cancel_profile_setup">Cancel Profile Setup</string>
+    <string name="cancel_profile_confirmation">Are you sure you want to cancel? Your changes will not be saved.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="profile_progress">Setting up your profile (2/3)</string>
+    <string name="name_required">Name is required</string>
 </resources>

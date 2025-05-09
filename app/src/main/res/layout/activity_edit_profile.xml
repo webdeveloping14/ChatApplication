@@ -7,91 +7,107 @@
     android:background="@drawable/gradient_background"
     tools:context=".EditProfileActivity">
 
-    <View
-        android:id="@+id/headerBackground"
+    <!-- Enhanced header with material design elevation -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#1A1A1A"
-        android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="12dp"
-        android:src="@drawable/ic_back"
-        android:contentDescription="Back"
-        app:tint="#FFFFFF"
-        app:layout_constraintTop_toTopOf="@id/headerBackground"
-        app:layout_constraintBottom_toBottomOf="@id/headerBackground"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Profile"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:fontFamily="sans-serif-medium"
-        android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="@id/headerBackground"
-        app:layout_constraintBottom_toBottomOf="@id/headerBackground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Save"
-        android:textColor="#2196F3"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif-medium"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="8dp"
-        android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="@id/headerBackground"
-        app:layout_constraintBottom_toBottomOf="@id/headerBackground"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1A1A1A"
+            android:elevation="4dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/backButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Back"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Edit Profile"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/backButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="24dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="#2196F3"
+                    android:text="Save"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:cornerRadius="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/headerBackground"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="32dp">
 
+            <!-- Enhanced profile image section -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/profileImageCardView"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="60dp"
-                app:cardElevation="4dp"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginTop="32dp"
+                app:cardCornerRadius="65dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/profileImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:contentDescription="Profile Image"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/default_profile"
-                    android:contentDescription="Profile Image" />
+                    android:src="@drawable/default_profile" />
 
             </androidx.cardview.widget.CardView>
 
@@ -99,181 +115,242 @@
                 android:id="@+id/changePhotoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="4dp"
                 android:contentDescription="Change Photo"
                 android:src="@drawable/ic_camera"
                 app:backgroundTint="#2196F3"
                 app:fabSize="mini"
-                app:tint="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="@id/profileImageCardView"
-                app:layout_constraintEnd_toEndOf="@id/profileImageCardView" />
+                app:layout_constraintEnd_toEndOf="@id/profileImageCardView"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/profileImageCardView"
+                app:layout_constraintVertical_bias="1.0"
+                app:tint="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/emailLabel"
-                android:layout_width="wrap_content"
+            <!-- Enhanced input fields with material design -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/formCardView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Email"
-                android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/profileImageCardView"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginTop="32dp"
+                app:cardBackgroundColor="#252525"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@id/profileImageCardView">
 
-            <TextView
-                android:id="@+id/emailTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#252525"
-                android:padding="16dp"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:enabled="false"
-                app:layout_constraintTop_toBottomOf="@id/emailLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:text="shaurya.pramod123@gmail.com" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <TextView
-                android:id="@+id/nameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Full Name"
-                android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/emailTextView"
-                app:layout_constraintStart_toStartOf="parent" />
+                    <!-- Email field -->
+                    <TextView
+                        android:id="@+id/emailLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="#2196F3"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/nameEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#252525"
-                android:padding="16dp"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:hint="Enter your full name"
-                android:textColorHint="#666666"
-                android:inputType="textPersonName"
-                app:layout_constraintTop_toBottomOf="@id/nameLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    <TextView
+                        android:id="@+id/emailTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#2A2A2A"
+                        android:enabled="false"
+                        android:padding="16dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        tools:text="shaurya.pramod123@gmail.com" />
 
-            <TextView
-                android:id="@+id/usernameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Username"
-                android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/nameEditText"
-                app:layout_constraintStart_toStartOf="parent" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="16dp"
+                        android:background="#333333" />
 
-            <EditText
-                android:id="@+id/usernameEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#252525"
-                android:padding="16dp"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:hint="Enter your username"
-                android:textColorHint="#666666"
-                android:inputType="text"
-                app:layout_constraintTop_toBottomOf="@id/usernameLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    <!-- Name field -->
+                    <TextView
+                        android:id="@+id/nameLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Full Name"
+                        android:textColor="#2196F3"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/statusLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Status"
-                android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/usernameEditText"
-                app:layout_constraintStart_toStartOf="parent" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:boxBackgroundColor="#2A2A2A"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:hintEnabled="false">
 
-            <EditText
-                android:id="@+id/statusEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#252525"
-                android:padding="16dp"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:hint="What's on your mind?"
-                android:textColorHint="#666666"
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:maxLines="3"
-                app:layout_constraintTop_toBottomOf="@id/statusLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/nameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter your full name"
+                            android:inputType="textPersonName"
+                            android:padding="16dp"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#666666"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="16dp"
+                        android:background="#333333" />
+
+                    <!-- Username field -->
+                    <TextView
+                        android:id="@+id/usernameLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Username"
+                        android:textColor="#2196F3"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:boxBackgroundColor="#2A2A2A"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_at"
+                        app:startIconTint="#666666">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/usernameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter your username"
+                            android:inputType="text"
+                            android:padding="16dp"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#666666"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="16dp"
+                        android:background="#333333" />
+
+                    <!-- Status field -->
+                    <TextView
+                        android:id="@+id/statusLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status"
+                        android:textColor="#2196F3"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:boxBackgroundColor="#2A2A2A"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="150"
+                        app:counterTextColor="#AAAAAA"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/statusEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:hint="What's on your mind?"
+                            android:inputType="textMultiLine"
+                            android:minLines="3"
+                            android:padding="16dp"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#666666"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Account creation info -->
             <TextView
                 android:id="@+id/accountCreatedTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-light"
                 android:textColor="#AAAAAA"
                 android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/statusEditText"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/formCardView"
                 tools:text="Account created on Apr 14, 2025" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <FrameLayout
+    <!-- Enhanced loading overlay -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000"
+        android:background="#CC000000"
+        android:clickable="true"
+        android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             app:cardBackgroundColor="#252525"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
-                android:padding="24dp">
+                android:orientation="vertical"
+                android:padding="32dp">
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:indeterminateTint="#2196F3" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loading_animation" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
                     android:text="Updating profile..."
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

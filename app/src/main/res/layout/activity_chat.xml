@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    android:background="@color/white">
+    android:background="#F0F7FD">
 
+    <!-- Enhanced toolbar with elevation and gradient -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#4169E1"
+        android:background="@drawable/toolbar_gradient_background"
+        android:elevation="4dp"
         app:contentInsetStart="0dp">
 
         <RelativeLayout
@@ -33,36 +35,63 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@id/btn_back"
-                android:src="@drawable/default_profile" />
+                android:src="@drawable/default_profile"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/username"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/profile_image"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Username"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/user_status"
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Username"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:id="@+id/user_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Online"
+                    android:textColor="#E0F7FA"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif" />
+            </LinearLayout>
+
+            <!-- Decorative elements in toolbar -->
+            <ImageView
+                android:id="@+id/decoration_dots"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/username"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/profile_image"
-                android:text="Online"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/decoration_dots"
+                android:alpha="0.7" />
 
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Subtle wave decoration at the top -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_below="@id/chat_toolbar"
+        android:src="@drawable/wave_decoration"
+        android:scaleType="fitXY"
+        android:alpha="0.1" />
+
+    <!-- Chat messages with decorative pattern background -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages_recycler_view"
         android:layout_width="match_parent"
@@ -70,22 +99,46 @@
         android:layout_above="@+id/bottom_layout"
         android:layout_below="@+id/chat_toolbar"
         android:clipToPadding="false"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:scrollbars="none" />
 
+    <!-- Small decorative elements -->
+    <View
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/dot_blue"
+        android:alpha="0.4" />
+
+    <View
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/dot_blue"
+        android:alpha="0.3" />
+
+    <!-- Enhanced bottom layout with card elevation -->
     <RelativeLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:padding="8dp">
+        android:background="@drawable/message_input_container_background"
+        android:padding="12dp"
+        android:elevation="8dp">
 
         <EditText
             android:id="@+id/message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="12dp"
             android:layout_toStartOf="@+id/send_button"
             android:background="@drawable/message_input_background"
             android:hint="Type a message..."
@@ -93,10 +146,11 @@
             android:maxLines="4"
             android:minHeight="48dp"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
+            android:paddingTop="12dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="10dp"
-            android:textSize="14sp" />
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif" />
 
         <ImageButton
             android:id="@+id/send_button"
@@ -107,6 +161,7 @@
             android:background="@drawable/send_button_background"
             android:contentDescription="Send message"
             android:src="@drawable/ic_send"
+            android:elevation="2dp"
             app:tint="@color/white" />
 
     </RelativeLayout>
