@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_lock">
+
+    <target
+        android:name="lock_body"
+        android:animation="@animator/lock_body_anim" />
+
+    <target
+        android:name="lock_hook"
+        android:animation="@animator/lock_hook_anim" />
+</animated-vector>

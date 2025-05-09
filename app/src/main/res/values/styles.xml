@@ -26,7 +26,16 @@
         <item name="android:background">@color/white</item>
         <!-- Optional: Add padding, rounded corners, etc., using a drawable -->
     </style>
-
+    <declare-styleable name="ParticleView">
+        <attr name="particleColor" format="color" />
+        <attr name="particleCount" format="integer" />
+        <attr name="particleMinSize" format="dimension" />
+        <attr name="particleMaxSize" format="dimension" />
+        <attr name="particleSpeed" format="float" />
+        <attr name="drawConnections" format="boolean" />
+        <attr name="connectionDistance" format="dimension" />
+        <attr name="connectionColor" format="color" />  <!-- This attribute might be missing -->
+    </declare-styleable>
     <!-- Button style -->
     <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>

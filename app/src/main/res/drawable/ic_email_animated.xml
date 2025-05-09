@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_email">
+
+    <target
+        android:name="envelope"
+        android:animation="@animator/email_rotate" />
+
+    <target
+        android:name="envelope_open"
+        android:animation="@animator/email_open" />
+</animated-vector>
