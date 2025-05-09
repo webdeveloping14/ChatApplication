@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,12 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth firebaseAuth;
+    private Chip textEmail;
     private FirebaseUser currentUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private CircleImageView profileImage;
     private TextView textUsername;
-    private TextView textBio, textEmail, textName;
+    private TextView textBio, textName;
     private ViewPager2 viewPager;
     private MaterialButton btnEditProfile;
     private MaterialButton btnStartChat;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         btnEditProfile = findViewById(R.id.button_edit_profile);
         btnStartChat = findViewById(R.id.button_start_chat);
         progressBar = findViewById(R.id.progress_bar);
-        textEmail = findViewById(R.id.text_email);
+        textEmail = findViewById(R.id.email_chip);
         textName = findViewById(R.id.text_name);
 
         setupButtonListeners();
