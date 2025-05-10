@@ -15,8 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
@@ -25,12 +23,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
-
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -39,20 +36,21 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView loginTextView;
     private ProgressBar progressBar;
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         usernameEditText = findViewById(R.id.username_reg);
         emailEditText = findViewById(R.id.email_reg);
         passwordEditText = findViewById(R.id.password_reg);
@@ -61,22 +59,13 @@ public class RegisterActivity extends AppCompatActivity {
         loginTextView = findViewById(R.id.login_reg);
         progressBar = findViewById(R.id.progress_bar);
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-            }
-        });
-
-        loginTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        registerButton.setOnClickListener(v -> registerUser());
+        loginTextView.setOnClickListener(v -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
         });
     }
+
     private void registerUser() {
         String username = usernameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
@@ -116,49 +105,36 @@ public class RegisterActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                Map<String, Object> userValues = new HashMap<>();
-                                userValues.put("username", username);
-                                userValues.put("email", email);
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                                String currentTime = sdf.format(new Date());
-                                userValues.put("createdAt", currentTime);
+                .addOnCompleteListener(this, task -> {
+                    progressBar.setVisibility(View.GONE);
 
-                                mDatabase.child("users").child(user.getUid()).setValue(userValues)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                progressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                        FirebaseUser user = mAuth.getCurrentUser();
 
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(RegisterActivity.this,
-                                                            "Registration successful!",
-                                                            Toast.LENGTH_SHORT).show();
+                        Map<String, Object> userValues = new HashMap<>();
+                        userValues.put("username", username);
+                        userValues.put("email", email);
+                        String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                        userValues.put("createdAt", currentTime);
 
-                                                    navigateToProfileSetupActivity();
-                                                } else {
-                                                    Toast.makeText(RegisterActivity.this,
-                                                            "Failed to save user data: " + task.getException().getMessage(),
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
-                            }
-                        } else {
-                            // If sign in fails, display a message to the user
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(RegisterActivity.this,
-                                    "Authentication failed: " + task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                        mDatabase.child("users").child(user.getUid()).setValue(userValues)
+                                .addOnCompleteListener(saveTask -> {
+                                    if (saveTask.isSuccessful()) {
+                                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                                        navigateToProfileSetupActivity();
+                                    } else {
+                                        Toast.makeText(this, "Failed to save user data: " +
+                                                saveTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(this, "Authentication failed: " +
+                                        (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
     private void navigateToProfileSetupActivity() {
         Intent intent = new Intent(RegisterActivity.this, ProfileSetupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
