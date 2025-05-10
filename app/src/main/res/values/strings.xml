@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatApplication</string>
+    <string name="app_name">ZipChat</string>
     <string name="loading_profile">Loading your profile…</string>
     <string name="error_creating_image_file">Failed to create image file</string>
     <string name="error_processing_image">Failed to process the image</string>
