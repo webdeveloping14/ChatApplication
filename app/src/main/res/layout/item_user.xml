@@ -5,17 +5,15 @@
     android:id="@+id/userCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#1E1E1E"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="3dp"
-    app:strokeColor="#3D3D3D"
+    app:cardBackgroundColor="#1A1A1E"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#303040"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,35 +21,41 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profileImageView"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/default_profile"
-            app:civ_border_color="#3D3D3D"
-            app:civ_border_width="2dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:shapeAppearanceOverlay="@style/CircularImageView"
+            app:strokeColor="#303040"
+            app:strokeWidth="2dp" />
 
         <View
             android:id="@+id/onlineIndicator"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:background="@drawable/online_indicator"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
-            app:layout_constraintEnd_toEndOf="@+id/profileImageView" />
+            app:layout_constraintEnd_toEndOf="@+id/profileImageView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintVertical_bias="0.95" />
 
         <TextView
             android:id="@+id/nameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/poppins_medium"
             android:maxLines="1"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toTopOf="@id/profileImageView"
             tools:text="Shaurya" />
@@ -62,10 +66,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
+            android:fontFamily="@font/poppins"
             android:maxLines="1"
-            android:textColor="#AAAAAA"
+            android:textColor="#B3B3CC"
             android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toBottomOf="@id/nameTextView"
             tools:text="\@shaurya.cpp" />
@@ -76,50 +83,60 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
+            android:fontFamily="@font/poppins_light_italic"
             android:maxLines="1"
-            android:textColor="#8E8E8E"
+            android:textColor="#8E8E9E"
             android:textSize="14sp"
-            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toBottomOf="@id/usernameTextView"
             tools:text="Developer here...!!" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:alpha="0.2"
+            app:dividerColor="#6E6E8E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileImageView" />
 
         <LinearLayout
             android:id="@+id/infoContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/statusTextView"
-            app:layout_constraintStart_toEndOf="@id/profileImageView"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="#6E6E8E" />
 
             <TextView
                 android:id="@+id/createdAtTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:drawablePadding="4dp"
-                android:gravity="center_vertical"
-                android:textColor="#666666"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#8E8E9E"
                 android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_calendar"
-                app:drawableTint="#666666"
                 tools:text="Apr 14, 2025" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/userActionButtons"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/infoContainer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
