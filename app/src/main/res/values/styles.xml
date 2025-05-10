@@ -36,6 +36,10 @@
         <attr name="connectionDistance" format="dimension" />
         <attr name="connectionColor" format="color" />  <!-- This attribute might be missing -->
     </declare-styleable>
+    <style name="CircularImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
     <!-- Button style -->
     <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
