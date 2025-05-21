@@ -52,7 +52,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private TextView loadingText;
     private TextInputEditText statusEditText, nameEditText;
     private View imageLoadingProgress;
-    private TextView progressText;
     private MaterialButton cancelButton;
     private MaterialButton saveButton;
 
@@ -123,7 +122,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
         statusEditText = findViewById(R.id.status_profile);
         nameEditText = findViewById(R.id.display_name);
         imageLoadingProgress = findViewById(R.id.image_loading_progress);
-        progressText = findViewById(R.id.progress_text);
         cancelButton = findViewById(R.id.cancel_button);
         saveButton = findViewById(R.id.save_button);
         FloatingActionButton cameraBtn = findViewById(R.id.camera_btn);
