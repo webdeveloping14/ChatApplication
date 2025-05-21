@@ -25,7 +25,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,7 +52,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private TextView loadingText;
     private TextInputEditText statusEditText, nameEditText;
     private View imageLoadingProgress;
-    private LinearProgressIndicator setupProgress;
     private TextView progressText;
     private MaterialButton cancelButton;
     private MaterialButton saveButton;
@@ -114,7 +112,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         initViews();
         setupListeners();
-        updateProgressIndicator();
         loadUserProfileFromFirebase();
     }
 
@@ -126,16 +123,11 @@ public class ProfileSetupActivity extends AppCompatActivity {
         statusEditText = findViewById(R.id.status_profile);
         nameEditText = findViewById(R.id.display_name);
         imageLoadingProgress = findViewById(R.id.image_loading_progress);
-        setupProgress = findViewById(R.id.setup_progress);
         progressText = findViewById(R.id.progress_text);
-
-        // Initialize the buttons
         cancelButton = findViewById(R.id.cancel_button);
         saveButton = findViewById(R.id.save_button);
         FloatingActionButton cameraBtn = findViewById(R.id.camera_btn);
 
-        // Set initial progress
-        setupProgress.setProgress(66); // As specified in XML (66%)
     }
 
     private void setupListeners() {
@@ -146,19 +138,11 @@ public class ProfileSetupActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> saveProfileAndNavigate());
     }
 
-    private void updateProgressIndicator() {
-        // Set progress indicator to 66% as shown in the XML layout
-        setupProgress.setProgress(66);
-        progressText.setText(R.string.profile_progress);
-    }
-
     private void handleCancelAction() {
-        // Show confirmation dialog before canceling
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.cancel_profile_setup))
                 .setMessage(getString(R.string.cancel_profile_confirmation))
                 .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                    // Navigate back or to a previous screen
                     finish();
                 })
                 .setNegativeButton(getString(R.string.no), null)
@@ -361,7 +345,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void saveProfileAndNavigate() {
-        // Validate inputs first
         String name = nameEditText.getText().toString().trim();
         if (name.isEmpty()) {
             nameEditText.setError(getString(R.string.name_required));
@@ -382,7 +365,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         String status = statusEditText.getText().toString().trim();
         Map<String, Object> profileUpdates = new HashMap<>();
         profileUpdates.put("status", status);
-        profileUpdates.put("name", name); // Changed from "Name" to "name" for consistency
+        profileUpdates.put("name", name);
 
         if (isPhotoChanged && profilePhotoPath != null) {
             uploadProfileImageAndSaveProfile(userId, profileUpdates);
@@ -418,7 +401,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
                     performImageUpload(imageRef, fileUri, userId, profileUpdates);
                 });
             } catch (IllegalArgumentException e) {
-                // Handle case where the URL is not a valid Firebase Storage URL
                 performImageUpload(imageRef, fileUri, userId, profileUpdates);
             }
         } else {
@@ -427,35 +409,31 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void performImageUpload(StorageReference imageRef, Uri fileUri, String userId, Map<String, Object> profileUpdates) {
-        loadingLayout.setVisibility(View.VISIBLE); // Show loading
+        loadingLayout.setVisibility(View.VISIBLE);
 
         imageRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         profileUpdates.put("profileImageUrl", uri.toString());
-                        // Update both Firestore and Realtime Database
                         updateProfileInDatabases(userId, profileUpdates);
                     });
                 })
                 .addOnFailureListener(e -> {
-                    loadingLayout.setVisibility(View.GONE); // Hide loading
+                    loadingLayout.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void updateProfileInDatabases(String userId, Map<String, Object> profileUpdates) {
-        // Update Firestore
         db.collection("users").document(userId)
                 .update(profileUpdates)
                 .addOnSuccessListener(aVoid -> {
-                    // Now update Realtime Database
                     FirebaseDatabase.getInstance().getReference("users").child(userId)
                             .updateChildren(profileUpdates)
                             .addOnCompleteListener(task -> {
-                                loadingLayout.setVisibility(View.GONE); // Hide loading
+                                loadingLayout.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(), "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                    // Navigate to MainActivity
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -474,14 +452,12 @@ public class ProfileSetupActivity extends AppCompatActivity {
         db.collection("users").document(userId)
                 .update(profileUpdates)
                 .addOnSuccessListener(aVoid -> {
-                    // Also update in Realtime Database
                     FirebaseDatabase.getInstance().getReference("users").child(userId)
                             .updateChildren(profileUpdates)
                             .addOnCompleteListener(task -> {
                                 loadingLayout.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(this, "✅ Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                    // Navigate to MainActivity
                                     Intent intent = new Intent(this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -491,19 +467,15 @@ public class ProfileSetupActivity extends AppCompatActivity {
                             });
                 })
                 .addOnFailureListener(e -> {
-                    // Check if document doesn't exist yet
                     if (e.getMessage() != null && e.getMessage().contains("NOT_FOUND")) {
-                        // Create the document instead of updating
                         db.collection("users").document(userId)
                                 .set(profileUpdates)
                                 .addOnSuccessListener(aVoid -> {
-                                    // Also update in Realtime Database
                                     FirebaseDatabase.getInstance().getReference("users").child(userId)
                                             .updateChildren(profileUpdates)
                                             .addOnCompleteListener(task -> {
                                                 loadingLayout.setVisibility(View.GONE);
                                                 Toast.makeText(this, "✅ Profile created successfully", Toast.LENGTH_SHORT).show();
-                                                // Navigate to MainActivity
                                                 Intent intent = new Intent(this, MainActivity.class);
                                                 startActivity(intent);
                                                 finish();

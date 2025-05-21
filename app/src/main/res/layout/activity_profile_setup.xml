@@ -31,6 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="24dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="@string/profile_setup_title"
@@ -137,34 +138,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/profile_image_container" />
 
             <!-- Progress indicator -->
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/setup_progress"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="40dp"
-                android:progress="66"
-                app:indicatorColor="@color/accent_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/change_photo"
-                app:trackColor="@color/divider_color"
-                app:trackCornerRadius="4dp"
-                app:trackThickness="8dp" />
-
-            <TextView
-                android:id="@+id/progress_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/montserrat"
-                android:text="@string/profile_progress"
-                android:textColor="@color/text_color_secondary"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/setup_progress"
-                app:layout_constraintStart_toStartOf="@+id/setup_progress"
-                app:layout_constraintTop_toBottomOf="@+id/setup_progress" />
 
             <!-- Name field container with outline -->
             <com.google.android.material.card.MaterialCardView
@@ -172,14 +145,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/progress_text"
+                app:layout_constraintTop_toBottomOf="@+id/change_photo"
                 app:strokeColor="@color/divider_color"
                 app:strokeWidth="1dp">
 
