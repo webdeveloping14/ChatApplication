@@ -80,7 +80,7 @@ public class ChatActivity extends AppCompatActivity {
     private void initializeFields() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User not authenticated!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
